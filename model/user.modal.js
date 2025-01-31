@@ -20,7 +20,6 @@ const userSchema = new mongoose.Schema(
     },
     confirmPassword: {
       type: String,
-      required: true,
     },
   },
   { timestamps: true, versionKey: false }
