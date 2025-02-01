@@ -7,8 +7,6 @@ const connectDB = require("./config/db");
 connectDB();
 
 const imageRoutes = require("./routes/image.route.js");
-const userRoutes = require("./routes/user.route.js");
-const favoriteRoutes = require("./routes/favorite.route.js");
 
 // Middleware setup
 app.use(express.json());
@@ -19,8 +17,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1", imageRoutes);
-app.use("/api/v1", userRoutes);
-app.use("/api/v1", favoriteRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
