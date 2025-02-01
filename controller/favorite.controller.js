@@ -29,9 +29,11 @@ const createFavorite = async (req, res) => {
 };
 
 const myFavorites = async (req, res) => {
-  const userId = userId;
+  const userId = "679cb01b4f8e1a1a7919e1f7";
 
-  const favorites = await Favorite.find({ user: userId });
+  const favorites = await Favorite.find({ user: userId })
+    .populate("image")
+    .sort("-createdAt");
 
   return res.status(200).json({
     message: favorites.length
@@ -42,7 +44,7 @@ const myFavorites = async (req, res) => {
 };
 
 const removeFromFavorite = async (req, res) => {
-  const userId = userId;
+  const userId = "679cb01b4f8e1a1a7919e1f7";
   const imageId = req.params.imageId;
 
   const favorite = await Favorite.findOne({ user: userId, image: imageId });
