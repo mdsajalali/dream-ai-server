@@ -35,7 +35,7 @@ const generateImage = async (req, res) => {
 const getImages = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 9;
     const totalImages = await ImageModal.countDocuments();
 
     const images = await ImageModal.find()
