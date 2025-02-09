@@ -10,9 +10,24 @@ const imageRoutes = require("./routes/image.route.js");
 const userRoutes = require("./routes/user.route.js");
 const favoriteRoutes = require("./routes/favorite.route.js");
 
-// Middleware setup
 app.use(express.json());
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://dream-aii.vercel.app",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 app.get("/", (req, res) => {
   res.send("Welcome to DreamAI!");
