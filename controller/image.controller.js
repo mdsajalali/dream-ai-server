@@ -67,8 +67,21 @@ const getUserImages = async (req, res) => {
   }
 };
 
+const deleteImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await ImageModal.findByIdAndDelete(id);
+
+    res.status(200).json({ message: "Image deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   generateImage,
   getImages,
   getUserImages,
+  deleteImage,
 };
