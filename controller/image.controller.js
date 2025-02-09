@@ -7,7 +7,7 @@ const togetherAIModel = process.env.TOGETHER_AI_MODEL;
 const generateImage = async (req, res) => {
   try {
     const together = new Together({ apiKey });
-    const { prompt } = req.body;
+    const { prompt, userId } = req.body;
 
     let response = await together.images.create({
       prompt,
@@ -23,7 +23,7 @@ const generateImage = async (req, res) => {
     // upload the base64 image to the storage
     const imageUrl = await uploadBase64toImage(base64Image);
     // Insert into the DB
-    const newImage = new ImageModal({ prompt, imageUrl });
+    const newImage = new ImageModal({ prompt, imageUrl, userId });
     await newImage.save();
 
     return res.status(200).json({ imageUrl });
@@ -55,7 +55,20 @@ const getImages = async (req, res) => {
   }
 };
 
+const getUserImages = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const images = await ImageModal.find({ userId });
+
+    res.status(200).json(images);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   generateImage,
   getImages,
+  getUserImages,
 };
