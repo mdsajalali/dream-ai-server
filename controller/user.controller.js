@@ -65,7 +65,6 @@ const loginUser = async (req, res) => {
   }
 };
 
-// Get all users
 const getUsers = async (req, res) => {
   try {
     const users = await UserModel.find({}, { password: 0 });
@@ -75,8 +74,21 @@ const getUsers = async (req, res) => {
   }
 };
 
+const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await UserModel.findByIdAndDelete(id);
+
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   createUser,
   getUsers,
   loginUser,
+  deleteUser,
 };
