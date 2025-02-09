@@ -11,20 +11,10 @@ const userRoutes = require("./routes/user.route.js");
 const favoriteRoutes = require("./routes/favorite.route.js");
 
 app.use(express.json());
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://dream-aii.vercel.app",
-];
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: ["http://localhost:3000", "https://dream-aii.vercel.app"],
     credentials: true,
   })
 );
