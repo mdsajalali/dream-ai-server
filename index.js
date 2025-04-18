@@ -13,11 +13,14 @@ const favoriteRoutes = require("./routes/favorite.route.js");
 
 app.use(
   cors({
-    origin: ["https://dream-aii.vercel.app/"],
+    origin: ["https://dream-aii.vercel.app"],
     methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
     credentials: true,
   })
 );
+
+app.options("*", cors());
+
 app.use(express.json());
 
 app.get("/api/v1", (req, res) => {
