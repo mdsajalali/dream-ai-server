@@ -13,7 +13,7 @@ const favoriteRoutes = require("./routes/favorite.route.js");
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://dream-aii.vercel.app"],
+    origin: ["https://dream-aii.vercel.app"],
     methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
     credentials: true,
   })
