@@ -1,5 +1,6 @@
 const { v2: cloudinary } = require("cloudinary");
 const express = require("express");
+import fileUpload from "express-fileupload";
 const cors = require("cors");
 const app = express();
 const connectDB = require("./config/db");
