@@ -19,16 +19,18 @@ app.use(
     tempFileDir: "/tmp/",
   })
 );
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", ["Authorization"]],
-  })
-);
+// CORS Configuration
+const corsOptions = {
+  origin: "https://dream-aii.vercel.app",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  optionsSuccessStatus: 200,
+};
 
+app.use(cors(corsOptions));
 
+// Handle preflight requests
+app.options("*", cors(corsOptions));
 
 app.get("/api/v1", (req, res) => {
   res.send("Welcome to DreamAI!");
