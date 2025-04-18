@@ -1,6 +1,6 @@
 const { v2: cloudinary } = require("cloudinary");
 const express = require("express");
-const cors = require("cors");
+// const cors = require("cors");
 const app = express();
 const connectDB = require("./config/db");
 require("dotenv").config();
@@ -11,17 +11,33 @@ const imageRoutes = require("./routes/image.route.js");
 const userRoutes = require("./routes/user.route.js");
 const favoriteRoutes = require("./routes/favorite.route.js");
 
-app.use(
-  cors({
-    origin: ["https://dream-aii.vercel.app"],
-    methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: ["https://dream-aii.vercel.app"],
+//     methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
+//     credentials: true,
+//   })
+// );
 
-app.options("*", cors());
+// app.options("*", cors());
 
 app.use(express.json());
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "https://dream-aii.vercel.app");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  next();
+});
 
 app.get("/api/v1", (req, res) => {
   res.send("Welcome to DreamAI!");
