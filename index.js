@@ -1,10 +1,9 @@
-require("dotenv").config();
+const { v2: cloudinary } = require("cloudinary");
 const express = require("express");
 const cors = require("cors");
 const app = express();
 const connectDB = require("./config/db");
-const { v2: cloudinary } = require("cloudinary");
-
+require("dotenv").config();
 
 connectDB();
 

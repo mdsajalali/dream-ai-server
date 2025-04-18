@@ -1,7 +1,9 @@
+const { v2: cloudinary } = require("cloudinary");
 const { default: Together } = require("together-ai");
 const ImageModal = require("../model/image.model"); 
 const apiKey = process.env.TOGETHER_API_KEY;
-const togetherAIModel = process.env.TOGETHER_AI_MODEL;
+const togetherAIModel = process.env.TOGETHER_AI_MODEL; 
+
 
 const generateImage = async (req, res) => {
   try {
@@ -17,6 +19,7 @@ const generateImage = async (req, res) => {
       n: 1,
       response_format: "b64_json",
     });
+
 
     const base64Image = response?.data[0]?.b64_json;
 
