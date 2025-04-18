@@ -3,6 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const connectDB = require("./config/db");
+const { v2: cloudinary } = require("cloudinary");
+
 
 connectDB();
 
@@ -26,6 +28,13 @@ app.get("/api/v1", (req, res) => {
 app.use("/api/v1", imageRoutes);
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/favorite", favoriteRoutes);
+
+// cloudinary configuration code
+cloudinary.config({
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
+});
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

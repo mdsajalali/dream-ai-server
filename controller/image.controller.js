@@ -1,6 +1,5 @@
 const { default: Together } = require("together-ai");
-const ImageModal = require("../model/image.model");
-const { uploadBase64toImage } = require("../utils");
+const ImageModal = require("../model/image.model"); 
 const apiKey = process.env.TOGETHER_API_KEY;
 const togetherAIModel = process.env.TOGETHER_AI_MODEL;
 
@@ -18,11 +17,20 @@ const generateImage = async (req, res) => {
       n: 1,
       response_format: "b64_json",
     });
+
     const base64Image = response?.data[0]?.b64_json;
 
-    // upload the base64 image to the storage
-    const imageUrl = await uploadBase64toImage(base64Image);
-    // Insert into the DB
+    // Upload base64 image to Cloudinary
+    const uploadResponse = await cloudinary.uploader.upload(
+      `data:image/png;base64,${base64Image}`,
+      {
+        folder: "ai-images",
+      }
+    );
+
+    const imageUrl = uploadResponse.secure_url;
+
+    // Save to DB
     const newImage = new ImageModal({ prompt, imageUrl, userId });
     await newImage.save();
 
