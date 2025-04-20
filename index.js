@@ -1,6 +1,6 @@
 const { v2: cloudinary } = require("cloudinary");
 const express = require("express");
-const fileUpload = require("express-fileupload")
+const fileUpload = require("express-fileupload");
 const cors = require("cors");
 const app = express();
 const connectDB = require("./config/db");
@@ -21,7 +21,7 @@ app.use(
 );
 // CORS Configuration
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: process.env.FRONTEND_URL,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   optionsSuccessStatus: 200,
