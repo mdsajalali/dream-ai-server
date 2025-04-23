@@ -1,6 +1,6 @@
 # AI Text-Based Image Generator Backend
 
-This backend powers an advanced AI-driven image generator, utilizing **Node.js**, **Express**, and **Mongoose**, with **Together AI** for text-to-image generation and **Supabase** for secure image storage and management.
+This backend powers an advanced AI-driven image generator, utilizing **Node.js**, **Express**, and **Mongoose**, with **Together AI** for text-to-image generation and **Cloudinary** for secure image storage and management.
 
 ## Features
 
@@ -9,7 +9,7 @@ This backend powers an advanced AI-driven image generator, utilizing **Node.js**
 - User-specific image gallery with organized collections
 - Global image showcase for all generated images
 - Favorite list functionality for easy access to preferred images
-- Reliable image storage and management with Supabase
+- Reliable image storage and management with Cloudinary
 - Scalable and efficient database handling with Mongoose
 - Admin dashboard for managing users, images, and roles
 
