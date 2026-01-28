@@ -15,15 +15,14 @@ const createFavorite = async (req, res) => {
     });
   }
 
-  const favorite = new Favorite({
+  const favorite = await Favorite.create({
     user: userId,
     image: imageId,
   });
 
-  await favorite.save();
-
   return res.status(201).json({
-    message: "Image has been added to your favorites successfully.",
+    message: "Image added to favorites",
+    data: favorite,
   });
 };
 
@@ -31,7 +30,7 @@ const myFavorites = async (req, res) => {
   const userId = req.user._id;
 
   const favorites = await Favorite.find({ user: userId }).populate(
-    "image user"
+    "image user",
   );
 
   return res.status(200).json({
