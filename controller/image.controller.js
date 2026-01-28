@@ -4,7 +4,6 @@ const ImageModal = require("../model/image.model");
 const apiKey = process.env.TOGETHER_API_KEY;
 const togetherAIModel = process.env.TOGETHER_AI_MODEL;
 
-
 const generateImage = async (req, res) => {
   try {
     const together = new Together({ apiKey });
@@ -27,7 +26,7 @@ const generateImage = async (req, res) => {
       `data:image/png;base64,${base64Image}`,
       {
         folder: "ai-images",
-      }
+      },
     );
 
     const imageUrl = uploadResponse.secure_url;
@@ -45,7 +44,7 @@ const generateImage = async (req, res) => {
 const getImages = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 9;
     const totalImages = await ImageModal.countDocuments();
 
     const images = await ImageModal.find()
@@ -69,11 +68,27 @@ const getUserImages = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const images = await ImageModal.find({ userId });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 9;
 
-    res.status(200).json(images);
+    const totalImages = await ImageModal.countDocuments({ userId });
+
+    const images = await ImageModal.find({ userId })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    const data = {
+      images,
+      totalPages: Math.ceil(totalImages / limit),
+      currentPage: page,
+    };
+
+    return res.status(200).json(data);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
   }
 };
 
