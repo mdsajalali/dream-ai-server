@@ -27,18 +27,35 @@ const createFavorite = async (req, res) => {
 };
 
 const myFavorites = async (req, res) => {
-  const userId = req.user._id;
+  try {
+    const userId = req.user._id;
 
-  const favorites = await Favorite.find({ user: userId }).populate(
-    "image user",
-  );
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 9;
 
-  return res.status(200).json({
-    message: favorites.length
-      ? "Your favorite images have been retrieved successfully."
-      : "You have no favorite images yet.",
-    data: { favorites },
-  });
+    const totalFavorites = await Favorite.countDocuments({ user: userId });
+
+    const favorites = await Favorite.find({ user: userId })
+      .populate("image user")
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      message: favorites.length
+        ? "Your favorite images have been retrieved successfully."
+        : "You have no favorite images yet.",
+      data: {
+        favorites,
+        totalPages: Math.ceil(totalFavorites / limit),
+        currentPage: page,
+      },
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
+  }
 };
 
 const removeFromFavorite = async (req, res) => {
