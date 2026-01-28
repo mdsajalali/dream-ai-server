@@ -44,23 +44,25 @@ const generateImage = async (req, res) => {
 const getImages = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 9;
-    const totalImages = await ImageModal.countDocuments();
+    const limit = parseInt(req.query.limit) || 12;
+    const search = req.query.search?.trim();
 
-    const images = await ImageModal.find()
+    const filter = search ? { prompt: { $regex: search, $options: "i" } } : {};
+
+    const totalImages = await ImageModal.countDocuments(filter);
+
+    const images = await ImageModal.find(filter)
       .skip((page - 1) * limit)
       .limit(limit)
       .sort({ createdAt: -1 });
 
-    const data = {
+    res.status(200).json({
       images,
       totalPages: Math.ceil(totalImages / limit),
       currentPage: page,
-    };
-
-    return res.status(200).json(data);
+    });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 

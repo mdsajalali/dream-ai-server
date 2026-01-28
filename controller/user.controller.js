@@ -51,7 +51,7 @@ const loginUser = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
       process.env.SECRET_KEY,
-      { expiresIn: "1h" }
+      { expiresIn: "1h" },
     );
 
     res.status(200).json({
@@ -67,10 +67,33 @@ const loginUser = async (req, res) => {
 
 const getUsers = async (req, res) => {
   try {
-    const users = await UserModel.find({}, { password: 0 });
-    res.status(200).json(users);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 8;
+    const search = req.query.search?.trim();
+
+    const filter = search
+      ? {
+          $or: [
+            { name: { $regex: search, $options: "i" } },
+            { email: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
+
+    const totalUsers = await UserModel.countDocuments(filter);
+
+    const users = await UserModel.find(filter, { password: 0 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      users,
+      totalPages: Math.ceil(totalUsers / limit),
+      currentPage: page,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
