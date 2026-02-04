@@ -3,35 +3,50 @@ const jwt = require("jsonwebtoken");
 const UserModel = require("../model/user.modal");
 
 const protect = async (req, res, next) => {
-  // 1) Getting token and check if it's there
-  const bearerToken = req.headers.authorization;
+  try {
+    const bearerToken = req.headers.authorization;
 
-  if (!bearerToken || !bearerToken.startsWith("Bearer ")) {
-    return next(
-      new Error("You are not logged in! Please log in to get access.")
-    );
+    if (!bearerToken || !bearerToken.startsWith("Bearer ")) {
+      return res.status(401).json({
+        message: "You are not logged in! Please log in to get access.",
+      });
+    }
+
+    const token = bearerToken.split(" ")[1];
+
+    let decoded;
+    try {
+      decoded = await promisify(jwt.verify)(token, process.env.SECRET_KEY);
+    } catch (err) {
+      if (err.name === "TokenExpiredError") {
+        return res
+          .status(401)
+          .json({ message: "Your session has expired. Please log in again." });
+      }
+      if (err.name === "JsonWebTokenError") {
+        return res
+          .status(401)
+          .json({ message: "Invalid token. Please log in again." });
+      }
+      throw err;
+    }
+
+    const currentUser = await UserModel.findById(decoded.id);
+
+    if (!currentUser) {
+      return res.status(401).json({
+        message: "The user belonging to this token no longer exists.",
+      });
+    }
+
+    req.user = currentUser;
+    next();
+  } catch (error) {
+    res.status(500).json({
+      message: "Something went wrong with the authentication process.",
+      error: error.message,
+    });
   }
-
-  // 2) Extract the token from the "Bearer <token>" format
-  const token = bearerToken.split(" ")[1]; // Get the token part after 'Bearer'
-
-  // 2) Verification token
-  const decoded = await promisify(jwt.verify)(token, process.env.SECRET_KEY);
-
-  //   3) Check if user still exists
-  const currentUser = await UserModel.findById(decoded.id);
-
-  if (!currentUser) {
-    return next(
-      new Error("The user belonging to this token no longer exists.")
-    );
-  }
-
-  // GRANT ACCESS TO PROTECTED ROUTE
-  req.user = currentUser;
-  next();
 };
 
-module.exports = {
-  protect,
-};
+module.exports = { protect };
